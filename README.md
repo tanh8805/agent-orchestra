@@ -36,3 +36,23 @@ with get_session() as session:
 | `POSTGRES_DB`       | `multi_agent`|
 | `POSTGRES_HOST`     | `localhost`  |
 | `POSTGRES_PORT`     | `5432`       |
+
+## LLM
+
+Mỗi role (`planner`, `executor`, `reviewer`) có provider, model và API key riêng trong `.env`:
+
+```
+PLANNER_PROVIDER=openai
+PLANNER_MODEL=gpt-4o
+PLANNER_API_KEY=...
+PLANNER_TEMPERATURE=0
+```
+
+Tương tự cho `EXECUTOR_*` và `REVIEWER_*`. Provider hỗ trợ: `openai`, `anthropic`, `google_genai`.
+
+```python
+from llm.llm import get_planner_llm, get_executor_llm, get_reviewer_llm
+
+llm = get_planner_llm()
+llm.invoke("Lập kế hoạch ...")
+```
