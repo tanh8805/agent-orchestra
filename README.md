@@ -2,17 +2,6 @@
 
 Dự án Multi-Agent, dùng [uv](https://docs.astral.sh/uv/) để quản lý package và PostgreSQL làm database.
 
-## Cấu trúc
-
-```
-.
-├── src/db/db.py        # Kết nối database (SQLAlchemy + psycopg)
-├── pyproject.toml      # Cấu hình project & dependencies (uv)
-├── Dockerfile
-├── docker-compose.yml  # PostgreSQL + app
-└── .env.example        # Mẫu biến môi trường
-```
-
 ## Bắt đầu
 
 ```bash
