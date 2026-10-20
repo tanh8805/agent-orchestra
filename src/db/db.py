@@ -1,27 +1,14 @@
-import os
 from collections.abc import Iterator
 from contextlib import contextmanager
 
-from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-load_dotenv()
+from config import get_database_config
 
 
-def get_database_url() -> URL:
-    return URL.create(
-        drivername="postgresql+psycopg",
-        username=os.getenv("POSTGRES_USER", "postgres"),
-        password=os.getenv("POSTGRES_PASSWORD", "postgres"),
-        host=os.getenv("POSTGRES_HOST", "localhost"),
-        port=int(os.getenv("POSTGRES_PORT", "5432")),
-        database=os.getenv("POSTGRES_DB", "multi_agent"),
-    )
-
-
-engine: Engine = create_engine(get_database_url(), pool_pre_ping=True)
+engine: Engine = create_engine(get_database_config().url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 
