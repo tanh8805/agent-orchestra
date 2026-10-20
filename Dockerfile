@@ -3,7 +3,14 @@ FROM python:3.12-slim
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
-COPY . .
-RUN uv sync --frozen --no-dev
+
+# Cài dependencies trước để cache layer, chỉ chạy lại khi pyproject.toml/uv.lock đổi
+COPY pyproject.toml uv.lock README.md ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+COPY src ./src
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
 CMD ["uv", "run", "python", "-m", "db.db"]
