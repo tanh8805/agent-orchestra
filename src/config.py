@@ -1,14 +1,11 @@
 import os
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Literal
 
 from dotenv import load_dotenv
 from sqlalchemy import URL
 
 load_dotenv()
-
-Role = Literal["planner", "executor", "reviewer"]
 
 
 @dataclass(frozen=True)
@@ -50,9 +47,7 @@ def get_database_config() -> DatabaseConfig:
     )
 
 
-@lru_cache
-def get_llm_config(role: Role) -> LLMConfig:
-    """Đọc <ROLE>_PROVIDER / _MODEL / _API_KEY / _TEMPERATURE từ .env."""
+def _load_llm_config(role: str) -> LLMConfig:
     prefix = role.upper()
     provider = os.getenv(f"{prefix}_PROVIDER")
     model = os.getenv(f"{prefix}_MODEL")
@@ -70,3 +65,18 @@ def get_llm_config(role: Role) -> LLMConfig:
         api_key=api_key,
         temperature=float(temperature) if temperature else None,
     )
+
+
+@lru_cache
+def get_planner_config() -> LLMConfig:
+    return _load_llm_config("planner")
+
+
+@lru_cache
+def get_executor_config() -> LLMConfig:
+    return _load_llm_config("executor")
+
+
+@lru_cache
+def get_reviewer_config() -> LLMConfig:
+    return _load_llm_config("reviewer")

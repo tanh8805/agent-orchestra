@@ -3,12 +3,15 @@ from functools import lru_cache
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
 
-from config import Role, get_llm_config
+from config import (
+    LLMConfig,
+    get_executor_config,
+    get_planner_config,
+    get_reviewer_config,
+)
 
 
-@lru_cache
-def get_llm(role: Role) -> BaseChatModel:
-    cfg = get_llm_config(role)
+def _build_llm(cfg: LLMConfig) -> BaseChatModel:
     return init_chat_model(
         cfg.model,
         model_provider=cfg.provider,
@@ -17,13 +20,16 @@ def get_llm(role: Role) -> BaseChatModel:
     )
 
 
+@lru_cache
 def get_planner_llm() -> BaseChatModel:
-    return get_llm("planner")
+    return _build_llm(get_planner_config())
 
 
+@lru_cache
 def get_executor_llm() -> BaseChatModel:
-    return get_llm("executor")
+    return _build_llm(get_executor_config())
 
 
+@lru_cache
 def get_reviewer_llm() -> BaseChatModel:
-    return get_llm("reviewer")
+    return _build_llm(get_reviewer_config())
